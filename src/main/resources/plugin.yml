@@ -1,0 +1,18 @@
+name: BitCraft
+version: 1.0
+main: com.bc.bcplugin.Plugin
+api-version: 1.16
+
+commands:
+  bitcoin:
+    description: 비트코인 api를 get메소드로 가져온다
+    aliases:
+      - getbit
+
+  bc:
+    description: 비트코인 플러그인의 기초 명령어.
+    aliases:
+      - bc
+      - bit
+      - bitcoin
+      - coin
