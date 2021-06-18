@@ -4,7 +4,11 @@ import com.bc.bcplugin.GUI.CoinAboutGUI;
 import com.bc.bcplugin.GUI.CoinListGUI;
 import com.bc.bcplugin.GUI.CoinMarketGUI;
 import com.bc.bcplugin.command.Commands;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,8 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * @author 임동우
@@ -27,11 +29,10 @@ import java.io.IOException;
 public class Plugin extends JavaPlugin implements Listener {
 
     private final Commands commands = new Commands(this);
-    private static final String JSON_URL = "C:\\Users\\임동우\\IdeaProjects\\BitCraftPlugin\\src\\main\\java\\com\\bc\\bcplugin\\json\\";
 
+    @SneakyThrows
     @Override
     public void onEnable() {
-        File fileDir = new File("C:\\Users\\임동우\\IdeaProjects\\BitCraftPlugin\\src\\main\\java\\com\\bc\\bcplugin\\json");
 
         getLogger().info("DWPlugin is running now!");
         getLogger().info("Have a fun during play this plugin.");
@@ -55,26 +56,18 @@ public class Plugin extends JavaPlugin implements Listener {
      * 첫 입장시 com.dw.plugin.json 패키지 안에 (DisplayName).json 파일이 생성됩니다.
      */
     @EventHandler
-    public static void playerJoin(PlayerJoinEvent e) {
+    public void playerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        File file = new File("plugins/BitCraft/players/" + player.getDisplayName() + ".yml");
         JSONObject jsonObject = new JSONObject();
-
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try {
-            File file = new File(JSON_URL + player.getDisplayName() + ".json");
-
             if(!file.exists()) {
-                FileWriter fileWriter = new FileWriter(file);
-
-                jsonObject.put("money", new Integer(50000));
-                jsonObject.put("name", player.getDisplayName());
-                jsonObject.put("UUID", String.valueOf(player.getUniqueId()));
-
-                fileWriter.write(jsonObject.toJSONString());
-                fileWriter.flush();
-
-                fileWriter.close();
+                config.set("name", player.getDisplayName());
+                config.set("money", 50000);
             }
-        }catch (IOException exception) {
+            config.save(file);
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }

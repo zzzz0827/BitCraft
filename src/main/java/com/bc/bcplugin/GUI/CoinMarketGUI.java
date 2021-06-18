@@ -19,7 +19,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 비트코인을 구매하는 GUI를 여는 코드입니다.
+ * Kind : GUI
+ * Purpose : 비트코인의을 구매/판매가 가능한 GUI를 설정하는 코드
+ * Admin Only : X
+ * Last Version : 1.0
  */
 public class CoinMarketGUI implements Listener {
 
@@ -92,16 +95,16 @@ public class CoinMarketGUI implements Listener {
         // 클릭한 아이템 없으면 리턴해서 무시
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isLeftClick()) {
+        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isLeftClick() && !e.isShiftClick()) {
             new CoinPurchaseCommand(player, "BTC", false);
         }
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isRightClick()) {
+        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isRightClick() && !e.isShiftClick()) {
             new CoinSaleCommand(player, "BTC", false);
         }
 
         if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isLeftClick() && e.isShiftClick())) {
-            new CoinSaleCommand(player, "BTC", true);
+            new CoinPurchaseCommand(player, "BTC", true);
         }
 
         if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isRightClick() && e.isShiftClick())) {

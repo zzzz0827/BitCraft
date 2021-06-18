@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
+/**
+ * 커맨드 제작을 설정하는 코드입니다.
+ */
 public abstract class CommandConfig {
 
     private Set<Condition> conditions;

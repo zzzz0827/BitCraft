@@ -19,10 +19,9 @@ public class Messager {
         return new ArrayList<>(Arrays.asList(strings));
     }
 
-    public static Set<String> asSet(String... strings) {
-        final Set<String> list = new HashSet<>(strings.length);
-        Collections.addAll(list, strings);
-        return list;
+    // sendMessage 위에만 사용 할 것
+    public static void sendLine(CommandSender cs) {
+        cs.sendMessage("§6=============================================");
     }
 
     public static void sendMessage(CommandSender cs, String str) {
@@ -30,14 +29,17 @@ public class Messager {
     }
 
     public static void sendSuccessMessage(CommandSender cs, String str) {
+        sendLine(cs);
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.AQUA + str);
     }
 
     public static void sendErrorMessage(CommandSender cs, String str) {
+        sendLine(cs);
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + str);
     }
 
     public static void sendOpErrorMessage(CommandSender cs) {
+        sendLine(cs);
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "당신은 관리자가 아닙니다.");
     }
 
@@ -50,6 +52,7 @@ public class Messager {
     }
 
     public static void tryCatchErrorMessage(CommandSender cs) {
+        sendLine(cs);
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "예기치 못한 오류가 발생했습니다.");
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "개발자에게 보내주실 경우 신속히 처리하겠습니다.");
     }

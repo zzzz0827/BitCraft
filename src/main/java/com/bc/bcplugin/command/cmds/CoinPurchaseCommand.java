@@ -3,80 +3,69 @@ package com.bc.bcplugin.command.cmds;
 import com.bc.bcplugin.bitcoin.Bitcoins;
 import com.bc.bcplugin.utils.Messager;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 
+/**
+ * Kind : Command
+ * Purpose : CoinMarketGUI 에서 비트코인을 구매하기 위한 커맨드
+ * Admin Only : X
+ * Last Version : 1.0
+ */
 public class CoinPurchaseCommand {
-
-    private static final String PLAYER_DATA_URL = "C:\\Users\\임동우\\IdeaProjects\\BitCraftPlugin\\src\\main\\java\\com\\bc\\bcplugin\\json\\";
-
-    JSONObject jsonObject;
-    JSONParser jsonParser;
-
-    File file;
-    FileWriter fileWriter;
 
     public CoinPurchaseCommand(CommandSender sender, String bitcoin, boolean isPurchaseAll) {
         Bitcoins bitcoins = new Bitcoins(bitcoin);
         Player player = (Player) sender;
+        File file = new File("plugins/BitCraft/players/" + player.getDisplayName() + ".yml");
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try {
             Long bitcoinPrice = Long.parseLong((String) bitcoins.getClosingPrice());
 
-            file = new File(PLAYER_DATA_URL + player.getDisplayName() + ".json");
-            jsonParser = new JSONParser();
-            jsonObject = (JSONObject) jsonParser.parse(new FileReader(file));
-
             if(!isPurchaseAll) {
-                if ((Long) jsonObject.get("money") < bitcoinPrice) {
+                if (config.getInt("money") < bitcoinPrice) {
                     Messager.sendErrorMessage(player, "보유 자산이 부족합니다!");
-                    Messager.sendMessage(player, "부족한 금액 : §e" + (bitcoinPrice - (Long) jsonObject.get("money")));
+                    Messager.sendMessage(player, "부족한 금액 : §e" + (bitcoinPrice - config.getInt("money")));
                 }else {
-                    jsonObject.put("money", (Long) jsonObject.get("money") - bitcoinPrice);
-                    if (jsonObject.get(bitcoin) != null) {
-                        jsonObject.put(bitcoin, new Integer((int) ((Long) jsonObject.get(bitcoin) + 1)));
-                    }
-                    jsonObject.computeIfAbsent(bitcoin, k -> new Integer(1));
-
-                    fileWriter = new FileWriter(file);
-
-                    fileWriter.write(jsonObject.toJSONString());
-                    fileWriter.flush();
+                    config.set(bitcoin, config.getInt(bitcoin) + 1);
+                    config.set("money", config.getInt("money") - bitcoinPrice);
+                    config.save(file);
 
                     Messager.sendSuccessMessage(player, "비트코인을 구매했습니다!");
                     Messager.sendMessage(player, "종류 : §6" + bitcoin + " §a구매가 : §e" + bitcoins.getClosingPrice() +
-                            " §a보유 금액 : §e" + jsonObject.get("money") + " §a보유 개수 : §6" + jsonObject.get(bitcoin) + "개");
-
-                    fileWriter.close();
+                            " §a보유 금액 : §e" + config.getInt("money") + " §a보유 개수 : §6" + config.getInt(bitcoin) + "개");
                 }
             }else {
-                if ((Long) jsonObject.get("money") < bitcoinPrice) {
-                    Messager.sendErrorMessage(player, "보유 자산이 부족합니다!");
-                    Messager.sendMessage(player, "부족한 금액 : §e" + (bitcoinPrice - (Long) jsonObject.get("money")));
-                }else {
-                    jsonObject.put("money", (Long) jsonObject.get("money") - bitcoinPrice);
-                    if (jsonObject.get(bitcoin) != null) {
-                        jsonObject.put(bitcoin, new Integer((int) ((Long) jsonObject.get(bitcoin) + 1)));
+                int totalPurchaseAmount = 0;
+                int totalPurchaseMoney = 0;
+                while (true) {
+                    if (config.getInt("money") < bitcoinPrice) {
+                        Messager.sendErrorMessage(player, "보유 자산이 부족합니다!");
+                        Messager.sendMessage(player, "부족한 금액 : §e" + (bitcoinPrice - config.getInt("money")));
+                        break;
+                    }else if(totalPurchaseMoney < config.getInt("money")) {
+                            totalPurchaseMoney += bitcoinPrice;
+                            totalPurchaseAmount++;
+                    }else {
+                        totalPurchaseAmount--;
+                        totalPurchaseMoney -= bitcoinPrice;
+
+                        config.set(bitcoin, config.getInt(bitcoin) + totalPurchaseAmount);
+                        config.set("money", config.getInt("money") - totalPurchaseMoney);
+                        config.save(file);
+
+                        Messager.sendSuccessMessage(player, "비트코인을 전부 구매했습니다!");
+                        Messager.sendMessage(player, "종류 : §6" + bitcoin + " §a구매가 : §e" + totalPurchaseMoney);
+                        Messager.sendMessage(player, "§a보유 금액 : §e" + config.getInt("money") + " §a구매 개수 : §6" + totalPurchaseAmount + "개");
+                        Messager.sendMessage(player, "§a보유 개수 : §6" + config.getInt(bitcoin) + "개");
+
+                        break;
                     }
-                    jsonObject.computeIfAbsent(bitcoin, k -> new Integer(1));
-
-                    fileWriter = new FileWriter(file);
-
-                    fileWriter.write(jsonObject.toJSONString());
-                    fileWriter.flush();
-
-                    Messager.sendSuccessMessage(player, "비트코인을 구매했습니다!");
-                    Messager.sendMessage(player, "종류 : §6" + bitcoin + " §a구매가 : §e" + bitcoins.getClosingPrice() +
-                            " §a보유 금액 : §e" + jsonObject.get("money") + " §a보유 개수 : §6" + jsonObject.get(bitcoin) + "개");
-
-                    fileWriter.close();
                 }
             }
-
         }catch (Exception e) {
             e.printStackTrace();
             Messager.tryCatchErrorMessage(player);

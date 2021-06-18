@@ -17,7 +17,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 비트코인 종류를 확인하는 인벤토리 창 설정 코드입니다.
+ * Kind : GUI
+ * Purpose : 비트코인의 정보를 확인하는 GUI를 설정하는 코드
+ * Admin Only : X
+ * Last Version : 1.0
  */
 public class CoinAboutGUI implements Listener {
 

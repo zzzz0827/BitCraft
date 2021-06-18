@@ -60,9 +60,10 @@ public class Commands implements CommandExecutor, TabCompleter {
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
                 Player player = (Player) sender;
                 player.sendMessage("§7===================§a[ §eBitCraft §a]§7===================");
-                player.sendMessage("§e/bc §aabout : §b(비트코인)의 현재 정보를 확인할 수 있는 GUI를 출력합니다..");
-                player.sendMessage("§e/bc §amarket : §b비트코인을 구매/판매 할 수 있는 시장 GUI를 출력합니다.");
+                player.sendMessage("§e/bc §aabout : §b비트코인의 현재 정보를 확인할 수 있는 GUI를 출력합니다.");
+                player.sendMessage("§e/bc §ahave : §b현재 보유중인 비트코인을 확인할 수 있는 GUI를 출력합니다.");
                 player.sendMessage("§e/bc §alist : §b비트코인의 종류를 보여주는 GUI를 출력합니다.");
+                player.sendMessage("§e/bc §amarket : §b비트코인을 구매/판매 할 수 있는 시장 GUI를 출력합니다.");
                 player.sendMessage("§e/bc §amoney : §b보유 자산을 관리하는 명령어들 출력합니다.");
                 player.sendMessage("§7===================§a[ §eBitCraft §a]§7===================");
                 return true;
@@ -90,6 +91,12 @@ public class Commands implements CommandExecutor, TabCompleter {
                 OpenCoinMarketGUIEvent openGUI = new OpenCoinMarketGUIEvent((Player) sender);
                 Bukkit.getPluginManager().callEvent(openGUI);
                 return true;
+            }
+        });
+        mainCommandConfig.addSubCommand("have", new CommandConfig() {
+            @Override
+            protected boolean onCommand(CommandSender sender, String command, String[] args) {
+                return super.onCommand(sender, command, args);
             }
         });
 
@@ -175,11 +182,11 @@ public class Commands implements CommandExecutor, TabCompleter {
      */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if(label.equalsIgnoreCase("bc") || label.equalsIgnoreCase("bit") ||
-            label.equalsIgnoreCase("coin") || label.equalsIgnoreCase("bitcoin")) {
+
+        if(label.equalsIgnoreCase("bc")) {
             switch (args.length) {
                 case 1:
-                    List<String> subCommands = Messager.asList("list", "about", "market", "money");
+                    List<String> subCommands = Messager.asList("list", "about", "market", "money", "have");
                     if(args[0].isEmpty()) {
                         return subCommands;
                     }else {
@@ -197,7 +204,9 @@ public class Commands implements CommandExecutor, TabCompleter {
                         }
                     }
                 case 4:
-                    return Messager.asList((String) null);
+                    try {
+                        return Messager.asList("");
+                    }catch (NullPointerException ignored) { }
             }
         }
         return null;
