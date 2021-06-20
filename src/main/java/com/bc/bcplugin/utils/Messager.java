@@ -15,7 +15,7 @@ public class Messager {
     public static final String DEFAULT_PREFIX = "§e<§6Bitⓒraft§e> ";
     private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    public static List<String> asList(String... strings) {
+    public static List<String> asList(String... strings) throws NullPointerException{
         return new ArrayList<>(Arrays.asList(strings));
     }
 

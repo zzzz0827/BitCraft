@@ -1,12 +1,16 @@
 package com.bc.bcplugin;
 
-import com.bc.bcplugin.GUI.CoinAboutGUI;
-import com.bc.bcplugin.GUI.CoinListGUI;
-import com.bc.bcplugin.GUI.CoinMarketGUI;
+import com.bc.bcplugin.GUI.about.CoinAboutGUI;
+import com.bc.bcplugin.GUI.about.CoinAboutGUIPageTwo;
+import com.bc.bcplugin.GUI.have.CoinHaveGUI;
+import com.bc.bcplugin.GUI.have.CoinHaveGUIPageTwo;
+import com.bc.bcplugin.GUI.list.CoinListGUI;
+import com.bc.bcplugin.GUI.list.CoinListGUIPageTwo;
+import com.bc.bcplugin.GUI.market.CoinMarketGUI;
+import com.bc.bcplugin.GUI.market.CoinMarketGUIPageTwo;
 import com.bc.bcplugin.command.Commands;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -41,8 +45,13 @@ public class Plugin extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new CoinListGUI(), this);
+        getServer().getPluginManager().registerEvents(new CoinListGUIPageTwo(), this);
         getServer().getPluginManager().registerEvents(new CoinAboutGUI(), this);
+        getServer().getPluginManager().registerEvents(new CoinAboutGUIPageTwo(), this);
         getServer().getPluginManager().registerEvents(new CoinMarketGUI(), this);
+        getServer().getPluginManager().registerEvents(new CoinMarketGUIPageTwo(), this);
+        getServer().getPluginManager().registerEvents(new CoinHaveGUI(), this);
+        getServer().getPluginManager().registerEvents(new CoinHaveGUIPageTwo(), this);
     }
 
     @Override

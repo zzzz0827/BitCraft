@@ -1,14 +1,14 @@
-package com.bc.bcplugin.GUI;
+package com.bc.bcplugin.GUI.list;
 
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class OpenCoinMarketGUIEvent extends Event {
+public class OpenCoinListGUIEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     public HumanEntity ent;
 
-    public OpenCoinMarketGUIEvent(HumanEntity ent) {
+    public OpenCoinListGUIEvent(HumanEntity ent) {
         this.ent = ent;
     }
 

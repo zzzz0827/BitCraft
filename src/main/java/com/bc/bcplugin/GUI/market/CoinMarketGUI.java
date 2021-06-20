@@ -1,6 +1,7 @@
-package com.bc.bcplugin.GUI;
+package com.bc.bcplugin.GUI.market;
 
-import com.bc.bcplugin.bitcoin.Bitcoins;
+import com.bc.bcplugin.GUI.ItemInitializer;
+import com.bc.bcplugin.GUI.list.OpenCoinListGUIPageTwoEvent;
 import com.bc.bcplugin.command.cmds.CoinPurchaseCommand;
 import com.bc.bcplugin.command.cmds.CoinSaleCommand;
 import com.bc.bcplugin.utils.Messager;
@@ -30,35 +31,14 @@ public class CoinMarketGUI implements Listener {
 
     public CoinMarketGUI() {
         inv = Bukkit.createInventory(null, 54, Messager.DEFAULT_PREFIX + "비트코인 §a시장");
-        initializeItems();
-    }
-
-    /**
-     * 인벤토리 내부 아이템을 설정합니다.
-     */
-    public void initializeItems() {
-        inv.addItem(createGuiItem(Material.GOLD_NUGGET, "§6BTC (비트코인)", "§e비트코인을 §a구매§e하거나 §b판매§e합니다."));
-        inv.addItem(createGuiItem(Material.GOLD_NUGGET, "§6ETH (이더리움)", "§e비트코인을 §a구매§e하거나 §b판매§e합니다."));
-        inv.addItem(createGuiItem(Material.GOLD_NUGGET, "§6LTC (라이트코인)", "§e비트코인을 §a구매§e하거나 §b판매§e합니다."));
-        inv.addItem(createGuiItem(Material.GOLD_NUGGET, "§6ETC (이더리움 클래식)", "§e비트코인을 §a구매§e하거나 §b판매§e합니다."));
-        inv.addItem(createGuiItem(Material.GOLD_NUGGET, "§6XRP (리플)", "§e비트코인을 §a구매§e하거나 §b판매§e합니다."));
-        
-        inv.setItem(53, createGuiItem(Material.PAPER, "§a구매/판매 방법",
+        new ItemInitializer(inv, true, 1, "§e비트코인을 §a구매§e하거나 §b판매§e합니다.");
+        inv.setItem(49, createGuiItem(Material.PAPER, "§a구매/판매 방법",
                 "§eLeft : 비트코인을 1개 구매합니다.",
                 "§eRight : 비트코인을 1개 판매합니다.",
                 "§eShift + Left : 보유 금액에 맞게 비트코인을 전부 구매합니다.",
                 "§eShift + Right : 소유 비트코인을 전부 판매합니다."));
     }
 
-    /**
-     *
-     * @param material    아이템 종류
-     * @param name        아이템 이름
-     * @param lore        아이템 설명
-     * @return
-     *
-     * 인벤토리 내부 아이템 정보를 설정합니다.
-     */
     protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {
         final ItemStack item = new ItemStack(material, 1);
         final ItemMeta meta = item.getItemMeta();
@@ -109,6 +89,13 @@ public class CoinMarketGUI implements Listener {
 
         if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isRightClick() && e.isShiftClick())) {
             new CoinSaleCommand(player, "BTC", true);
+        }
+
+        if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a다음 페이지") && e.isLeftClick()) {
+            OpenCoinMarketGUIPageTwoEvent openGUI = new OpenCoinMarketGUIPageTwoEvent(player);
+            Bukkit.getPluginManager().callEvent(openGUI);
+        }else if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a이전 페이지") && e.isLeftClick()) {
+            Messager.sendErrorMessage(player, "이전 페이지가 존재하지 않습니다!");
         }
     }
 
