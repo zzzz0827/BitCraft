@@ -1,6 +1,7 @@
 package com.bc.bcplugin.command.cmds;
 
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.NumberFormatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,7 +34,7 @@ public class MoneySendCommand {
             if (username.equals(player.getDisplayName())) {
                 Messager.sendErrorMessage(player, "자신에게 이체 할 수 없습니다!");
             }else if (giverFile.exists() && recipientFile.exists()) {
-                sendMoney = giverConfig.get("money");
+                sendMoney = NumberFormatter.money(giverConfig.getInt("money"));
 
                 int giverMoney = giverConfig.getInt("money");
                 int recipientMoney = recipientConfig.getInt("money");
@@ -47,13 +48,13 @@ public class MoneySendCommand {
                     giverConfig.save(giverFile);
                     recipientConfig.save(recipientFile);
 
-                    nowMoney = giverConfig.getInt("money");
+                    nowMoney = NumberFormatter.money(giverConfig.getInt("money"));
 
                     Messager.sendSuccessMessage(player, "성공적으로 이체되었습니다!");
                     Messager.sendMessage(player, "이체 금액 : §e" + sendMoney + " §a이체 후 금액 : §e" + nowMoney);
                 }
             }else if (!recipientFile.exists()){
-                Messager.sendErrorMessage(player, "§b" + username + " §c은(는) 존재하지 않습니다!");
+                Messager.sendPlayerNotExistErrorMessage(player, username);
             }
         }catch (Exception e) {
             e.printStackTrace();

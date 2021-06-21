@@ -1,6 +1,7 @@
 package com.bc.bcplugin.command.cmds;
 
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.NumberFormatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +30,7 @@ public class MoneyReduceCommand {
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try {
             if (file.exists() && player.isOp()) {
-                prevMoney = config.get("money");
+                prevMoney = NumberFormatter.money(config.getInt("money"));
 
                 int resultMoney = config.getInt("money") - Integer.parseInt(money);
                 if(resultMoney < 0) {
@@ -38,7 +39,7 @@ public class MoneyReduceCommand {
                     config.set("money", resultMoney);
                     config.save(file);
 
-                    nowMoney = config.getInt("money");
+                    nowMoney = NumberFormatter.money(config.getInt("money"));
 
                     Messager.sendSuccessMessage(player, "성공적으로 차감되었습니다!");
                     Messager.sendMessage(player, "기존 금액 : §e" + prevMoney + " §a차감 후 금액 : §e" + nowMoney);
@@ -46,7 +47,7 @@ public class MoneyReduceCommand {
             }else if (!player.isOp()) {
                 Messager.sendOpErrorMessage(player);
             }else if (!file.exists()){
-                Messager.sendErrorMessage(player, "§b" + username + " §c은(는) 존재하지 않습니다!");
+                Messager.sendPlayerNotExistErrorMessage(player, username);
             }
         }catch (Exception e) {
             e.printStackTrace();

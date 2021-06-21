@@ -2,6 +2,7 @@ package com.bc.bcplugin;
 
 import com.bc.bcplugin.GUI.about.CoinAboutGUI;
 import com.bc.bcplugin.GUI.about.CoinAboutGUIPageTwo;
+import com.bc.bcplugin.GUI.admin.PlayerManagementGUI;
 import com.bc.bcplugin.GUI.have.CoinHaveGUI;
 import com.bc.bcplugin.GUI.have.CoinHaveGUIPageTwo;
 import com.bc.bcplugin.GUI.list.CoinListGUI;
@@ -9,6 +10,7 @@ import com.bc.bcplugin.GUI.list.CoinListGUIPageTwo;
 import com.bc.bcplugin.GUI.market.CoinMarketGUI;
 import com.bc.bcplugin.GUI.market.CoinMarketGUIPageTwo;
 import com.bc.bcplugin.command.Commands;
+import com.bc.bcplugin.utils.Messager;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -52,6 +54,7 @@ public class Plugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new CoinMarketGUIPageTwo(), this);
         getServer().getPluginManager().registerEvents(new CoinHaveGUI(), this);
         getServer().getPluginManager().registerEvents(new CoinHaveGUIPageTwo(), this);
+        getServer().getPluginManager().registerEvents(new PlayerManagementGUI(), this);
     }
 
     @Override
@@ -68,12 +71,12 @@ public class Plugin extends JavaPlugin implements Listener {
     public void playerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         File file = new File("plugins/BitCraft/players/" + player.getDisplayName() + ".yml");
-        JSONObject jsonObject = new JSONObject();
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try {
             if(!file.exists()) {
                 config.set("name", player.getDisplayName());
                 config.set("money", 50000);
+                e.setJoinMessage(Messager.DEFAULT_PREFIX + "§b" + player.getDisplayName() + "§a님이 §c처음으로 §e서버에 §a입장했습니다! §c 모두 환영해줍시다!");
             }
             config.save(file);
         } catch (Exception exception) {

@@ -4,6 +4,7 @@ import com.bc.bcplugin.GUI.ItemInitializer;
 import com.bc.bcplugin.GUI.list.OpenCoinListGUIEvent;
 import com.bc.bcplugin.bitcoin.Bitcoins;
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.StringExtractor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -61,11 +62,10 @@ public class CoinAboutGUIPageTwo implements Listener {
             return;
         }
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)")) {
-            Bitcoins bitcoins = new Bitcoins("BTC");
-            player.sendMessage(bitcoins.toString());
-        }else if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6ETH (이더리움)")) {
-            Bitcoins bitcoins = new Bitcoins("ETH");
+        String bitcoin = StringExtractor.extractAlphabet(clickedItem.getItemMeta().getDisplayName());
+
+        if(clickedItem.getType() == Material.GOLD_NUGGET) {
+            Bitcoins bitcoins = new Bitcoins(bitcoin);
             player.sendMessage(bitcoins.toString());
         }
 

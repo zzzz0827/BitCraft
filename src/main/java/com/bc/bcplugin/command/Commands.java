@@ -1,6 +1,8 @@
 package com.bc.bcplugin.command;
 
 import com.bc.bcplugin.GUI.about.OpenCoinAboutGUIEvent;
+import com.bc.bcplugin.GUI.admin.PlayerManagementGUI;
+import com.bc.bcplugin.GUI.admin.PlayerManagementGUIEvent;
 import com.bc.bcplugin.GUI.have.OpenCoinHaveGUIEvent;
 import com.bc.bcplugin.GUI.list.OpenCoinListGUIEvent;
 import com.bc.bcplugin.GUI.market.OpenCoinMarketGUIEvent;
@@ -38,7 +40,7 @@ public class Commands implements CommandExecutor, TabCompleter {
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
                 Player player = (Player) sender;
 
-                // 서브 커맨드가 입력되지 않았을 경우
+                // 이 플러그인의 기초 정보 출력
                 if(args.length == 0) {
                     player.sendMessage("§7===================§a[ §eBitCraft §a]§7===================");
                     player.sendMessage("§eMade By : §a임동우");
@@ -54,7 +56,9 @@ public class Commands implements CommandExecutor, TabCompleter {
             }
         };
 
-        // 서브 커맨드를 추가하는 명령어입니다.
+        // 서브 커맨드를 추가하는 코드입니다.
+
+        // /bc help 입력 시
         mainCommandConfig.addSubCommand("help", new CommandConfig() {
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -71,6 +75,7 @@ public class Commands implements CommandExecutor, TabCompleter {
             }
         });
 
+        // /bc list 입력 시
         mainCommandConfig.addSubCommand("list", new CommandConfig() {
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -79,6 +84,8 @@ public class Commands implements CommandExecutor, TabCompleter {
                 return true;
             }
         });
+        
+        // /bc about 입력 시
         mainCommandConfig.addSubCommand("about", new CommandConfig() {
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -87,7 +94,9 @@ public class Commands implements CommandExecutor, TabCompleter {
                 return true;
             }
         });
-        mainCommandConfig.addSubCommand("market", new CommandConfig() {
+
+        // /bc market 입력 시
+       mainCommandConfig.addSubCommand("market", new CommandConfig() {
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
                 OpenCoinMarketGUIEvent openGUI = new OpenCoinMarketGUIEvent((Player) sender);
@@ -95,6 +104,8 @@ public class Commands implements CommandExecutor, TabCompleter {
                 return true;
             }
         });
+
+       // /bc have 입력 시
         mainCommandConfig.addSubCommand("have", new CommandConfig() {
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -103,9 +114,21 @@ public class Commands implements CommandExecutor, TabCompleter {
                 return true;
             }
         });
+        
+        // /bc manage (Admin Only) 입력 시
+        mainCommandConfig.addSubCommand("manage", new CommandConfig() {
+            @Override
+            protected boolean onCommand(CommandSender sender, String command, String[] args) {
+                PlayerManagementGUIEvent openGUI = new PlayerManagementGUIEvent((Player) sender);
+                Bukkit.getPluginManager().callEvent(openGUI);
+                return true;
+            }
+        });
 
+        // /bc admin ?? 입력 시
         final CommandConfig helpCommand = new CommandConfig() {
             {
+                // /bc admin money 입력 시
                 addSubCommand("money", new CommandConfig() {
                     @Override
                     protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -124,6 +147,8 @@ public class Commands implements CommandExecutor, TabCompleter {
                     }
                 });
             }
+            
+            // /bc admin 입력 시
             @Override
             protected boolean onCommand(CommandSender sender, String command, String[] args) {
                 Player player = (Player) sender;
@@ -131,6 +156,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                 if (player.isOp()) {
                     if (args.length == 0) {
                         player.sendMessage("§7=================§a[ §cAdmin §eCommands §a]§7=================");
+                        player.sendMessage("§e/bc §amanage §c[플레이어] : §b[플레이어]의 비트코인을 관리할 수 있는 GUI를 출력합니다. §c(Admin Only)");
                         player.sendMessage("§e/bc §aadd §c[플레이어] [비트코인] [개수] : §b[플레이어]의 [비트코인]을 [개수]민큼 추가합니다. §c(Admin Only)");
                         player.sendMessage("§e/bc §aremove §c[플레이어] [비트코인] [개수] : §b[플레이어]의 [비트코인]을 [개수]민큼 감소합니다. §c(Admin Only)");
                         player.sendMessage("§e/bc §aset §c[플레이어] [비트코인] [개수] : §b[플레이어]의 [비트코인]을 [개수]민큼 설정합니다. §c(Admin Only)");
@@ -145,16 +171,20 @@ public class Commands implements CommandExecutor, TabCompleter {
         };
         mainCommandConfig.addSubCommand("admin", helpCommand);
 
+        // /bc money ?? 입력 시
         final CommandConfig moneyCommand = new CommandConfig() {
             {
+                // /bc money check 또는 /bc money check [플레이어] (Admin Only) 입력 시
                 addSubCommand("check", new CommandConfig() {
                     @Override
                     protected boolean onCommand(CommandSender sender, String command, String[] args) {
-                        new MoneyCheckCommand(sender);
+                        if (args.length == 0) new MoneyCheckCommand(sender);
+                        else if (args.length == 1) new MoneyCheckCommand(sender, args[0]);
                         return true;
                     }
                 });
 
+                // /bc money give (Admin Only) 입력 시
                 addSubCommand("give", new CommandConfig() {
                     @Override
                     protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -168,6 +198,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                     }
                 });
 
+                // /bc money reduce (Admin Only) 입력 시
                 addSubCommand("reduce", new CommandConfig() {
                     @Override
                     protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -181,6 +212,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                     }
                 });
 
+                // /bc money send 입력 시
                 addSubCommand("send", new CommandConfig() {
                     @Override
                     protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -195,6 +227,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                 });
             }
 
+            // /bc money 입력 시
             @Override
             protected boolean onCommand (CommandSender sender, String command, String[]args){
                 Player player = (Player) sender;
@@ -223,37 +256,54 @@ public class Commands implements CommandExecutor, TabCompleter {
      */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        try {
-            if (label.equalsIgnoreCase("bc")) {
-                switch (args.length) {
-                    case 1:
-                        List<String> subCommands = Messager.asList("list", "about", "market", "money", "have", "help", "admin");
+        Player player = (Player) sender;
+
+        if (label.equalsIgnoreCase("bc")) {
+            switch (args.length) {
+                case 1:
+                    if (player.isOp()) {
+                        List<String> subCommands = Messager.asList("list", "about", "market", "money", "have", "help", "admin", "manage");
                         if (!args[0].isEmpty()) {
                             subCommands.removeIf(cmd -> !cmd.toLowerCase().startsWith(args[0].toLowerCase()));
                         }
                         return subCommands;
-                    case 2:
+                    }else {
+                        List<String> subCommands = Messager.asList("list", "about", "market", "money", "have", "help");
+                        if (!args[0].isEmpty()) {
+                            subCommands.removeIf(cmd -> !cmd.toLowerCase().startsWith(args[0].toLowerCase()));
+                        }
+                        return subCommands;
+                    }
+
+                case 2:
+                    if (player.isOp()) {
                         if (args[0].equalsIgnoreCase("money")) {
-                            List<String> getLists = Messager.asList("check", "give", "reduce", "send", "admin");
+                            List<String> getLists = Messager.asList("check", "give", "reduce", "send");
                             if (!args[1].isEmpty()) {
                                 getLists.removeIf(getList -> !getList.toLowerCase().startsWith(args[1].toLowerCase()));
                             }
                             return getLists;
-                        }else if(args[0].equalsIgnoreCase("admin")) {
+                        } else if (args[0].equalsIgnoreCase("admin")) {
                             List<String> getLists = Messager.asList("money");
-                            if(!args[1].isEmpty()) {
+                            if (!args[1].isEmpty()) {
                                 getLists.removeIf(getList -> !getList.toLowerCase().startsWith(args[1].toLowerCase()));
                             }
                             return getLists;
                         }
-                    case 4:
-                        return Messager.asList((String) null);
-
-                }
+                    }else {
+                        if (args[0].equalsIgnoreCase("money")) {
+                            List<String> getLists = Messager.asList("check", "send");
+                            if (!args[1].isEmpty()) {
+                                getLists.removeIf(getList -> !getList.toLowerCase().startsWith(args[1].toLowerCase()));
+                            }
+                            return getLists;
+                        }
+                    }
+                case 4:
+                    return Messager.asList("§");
             }
-        }catch (NullPointerException ignored) {
-
         }
+
         return null;
     }
 }

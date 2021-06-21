@@ -2,6 +2,7 @@ package com.bc.bcplugin.command.cmds;
 
 import com.bc.bcplugin.bitcoin.Bitcoins;
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.NumberFormatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,7 +25,8 @@ public class CoinSaleCommand {
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         try {
-            int bitcoinPrice = Integer.parseInt((String) bitcoins.getClosingPrice());
+            double bitcoinPrice = Double.parseDouble((String) bitcoins.getClosingPrice());
+
             if(!isSaleAll) {
                 if (config.getInt(bitcoin) <= 0 || config.get(bitcoin) == null) {
                     Messager.sendErrorMessage(player, "해당 비트코인을 보유하고 있지 않습니다!");
@@ -34,8 +36,10 @@ public class CoinSaleCommand {
                     config.save(file);
 
                     Messager.sendSuccessMessage(player, "비트코인을 판매했습니다!");
-                    Messager.sendMessage(player, "종류 : §6" + bitcoin + " §a판매가 : §e" + bitcoins.getClosingPrice() +
-                            " §a보유 금액 : §e" + config.getInt("money") + " §a보유 개수 : §6" + config.getInt(bitcoin) + "개");
+                    Messager.sendMessage(player, "종류 : §6" + bitcoin +
+                            " §a판매가 : §e" + NumberFormatter.money(bitcoins.getClosingPrice()));
+                    Messager.sendMessage(player, "보유 금액 : §e" + NumberFormatter.money(config.getInt("money")) +
+                            " §a보유 개수 : §6" + NumberFormatter.number(config.getInt(bitcoin)) + "개");
                 }
             }else {
                 if (config.getInt(bitcoin) <= 0 || config.get(bitcoin) == null) {
@@ -48,8 +52,9 @@ public class CoinSaleCommand {
                     config.save(file);
 
                     Messager.sendSuccessMessage(player, "비트코인을 전부 판매했습니다!");
-                    Messager.sendMessage(player, "종류 : §6" + bitcoin + " §a총 판매가 : §e" + (bitcoinPrice * bitcoinAmount) +
-                            " §a보유 금액 : §e" + config.getInt("money"));
+                    Messager.sendMessage(player, "종류 : §6" + bitcoin +
+                            " §a총 판매가 : §e" + NumberFormatter.money(bitcoinPrice * bitcoinAmount));
+                    Messager.sendMessage(player, "보유 금액 : §e" + NumberFormatter.money(config.getInt("money")));
                 }
             }
         }catch (Exception e) {

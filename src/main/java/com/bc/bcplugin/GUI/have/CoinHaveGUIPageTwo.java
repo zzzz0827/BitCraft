@@ -4,6 +4,8 @@ import com.bc.bcplugin.GUI.ItemInitializer;
 import com.bc.bcplugin.GUI.about.OpenCoinAboutGUIEvent;
 import com.bc.bcplugin.bitcoin.Bitcoins;
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.NumberFormatter;
+import com.bc.bcplugin.utils.StringExtractor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -53,21 +55,20 @@ public class CoinHaveGUIPageTwo implements Listener {
         // 클릭한 아이템 없으면 리턴해서 무시
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        String bitcoinName = clickedItem.getItemMeta().getDisplayName();
+        String bitcoin = StringExtractor.extractAlphabet(clickedItem.getItemMeta().getDisplayName());
 
-        if (bitcoinName.equalsIgnoreCase("§6BTC (비트코인)") && e.isLeftClick()) {
-            Bitcoins bitcoins = new Bitcoins("BTC");
+        if (clickedItem.getType() == Material.GOLD_NUGGET) {
+            Bitcoins bitcoins = new Bitcoins(bitcoin);
             Messager.sendLine(player);
-            Messager.sendMessage(player, "종류 : §6" + bitcoinName);
-            Messager.sendMessage(player, "보유 개수 §e: " + config.getInt("BTC") + "개");
+            Messager.sendMessage(player, "종류 : §6" + bitcoin);
+            Messager.sendMessage(player, "보유 개수 §e: " + NumberFormatter.number(config.getInt(bitcoin)));
 
-            if (config.get("BTC") == null || config.getInt("BTC") == 0) {
+            if (config.get(bitcoin) == null || config.getInt(bitcoin) == 0) {
                 Messager.sendMessage(player, "§c해당 비트코인을 소유하고 있지 않습니다!");
-            }else {
-                Messager.sendMessage(player, "총 판매 시 가격 §e: " + config.getInt("BTC") * (int) bitcoins.getClosingPrice());
+            } else {
+                Messager.sendMessage(player, "총 판매 시 가격 §e: " +
+                        NumberFormatter.money(config.getInt(bitcoin) * (int) bitcoins.getClosingPrice()));
             }
-
-            player.closeInventory();
         }
 
         if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a다음 페이지") && e.isLeftClick()) {

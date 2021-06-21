@@ -1,6 +1,7 @@
 package com.bc.bcplugin.command.cmds;
 
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.NumberFormatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,11 +22,6 @@ import java.util.Objects;
  */
 public class MoneyGiveCommand {
 
-    private static final String PLAYER_DATA_URL = "C:\\Users\\임동우\\IdeaProjects\\BitCraftPlugin\\src\\main\\java\\com\\bc\\bcplugin\\json\\";
-
-    JSONParser jsonParser;
-    JSONObject jsonObject;
-
     Object prevMoney;
     Object nowMoney;
 
@@ -35,12 +31,12 @@ public class MoneyGiveCommand {
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try {
             if (player.isOp() && file.exists()) {
-                prevMoney = config.getInt("money");
+                prevMoney = NumberFormatter.money(config.getInt("money"));
 
                 config.set("money", config.getInt("money") + Integer.parseInt(money));
                 config.save(file);
 
-                nowMoney = config.getInt("money");
+                nowMoney = NumberFormatter.money(config.getInt("money"));
 
                 Messager.sendSuccessMessage(player, "성공적으로 지급되었습니다!");
                 Messager.sendMessage(player, "기존 금액 : §e" + prevMoney + " §a지급 후 금액 : §e" + nowMoney);
@@ -48,7 +44,7 @@ public class MoneyGiveCommand {
             }else if (!player.isOp()) {
                 Messager.sendOpErrorMessage(player);
             }else if (!file.exists()){
-                Messager.sendErrorMessage(player, "§b" + username + " §c은(는) 존재하지 않습니다!");
+                Messager.sendPlayerNotExistErrorMessage(player, username);
             }
         }catch (Exception e) {
             e.printStackTrace();

@@ -46,6 +46,7 @@ public class Bitcoins {
 
             jsonParser = new JSONParser();
             jsonObject = (JSONObject) jsonParser.parse(result);
+
             coinData = (JSONObject) jsonObject.get("data");
             coinInfo = (JSONObject) coinData.get(bitcoin);
 
@@ -68,7 +69,7 @@ public class Bitcoins {
     }
 
     public String toString() {
-        return "§6============[§e " + getBitcoin() +" §6]============\n" +
+        return "§6================[§e " + getBitcoin() +" §6]================\n" +
                 getOpeningPrice() + "\n" +
                 "§b현재가 §e: " + getClosingPrice() + "\n" +
                 getMinPrice() + "\n" +

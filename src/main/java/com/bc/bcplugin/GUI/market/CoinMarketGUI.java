@@ -1,10 +1,10 @@
 package com.bc.bcplugin.GUI.market;
 
 import com.bc.bcplugin.GUI.ItemInitializer;
-import com.bc.bcplugin.GUI.list.OpenCoinListGUIPageTwoEvent;
 import com.bc.bcplugin.command.cmds.CoinPurchaseCommand;
 import com.bc.bcplugin.command.cmds.CoinSaleCommand;
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.StringExtractor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -32,21 +32,19 @@ public class CoinMarketGUI implements Listener {
     public CoinMarketGUI() {
         inv = Bukkit.createInventory(null, 54, Messager.DEFAULT_PREFIX + "비트코인 §a시장");
         new ItemInitializer(inv, true, 1, "§e비트코인을 §a구매§e하거나 §b판매§e합니다.");
-        inv.setItem(49, createGuiItem(Material.PAPER, "§a구매/판매 방법",
+        inv.setItem(49, createGuiItem(
                 "§eLeft : 비트코인을 1개 구매합니다.",
                 "§eRight : 비트코인을 1개 판매합니다.",
                 "§eShift + Left : 보유 금액에 맞게 비트코인을 전부 구매합니다.",
                 "§eShift + Right : 소유 비트코인을 전부 판매합니다."));
     }
 
-    protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {
-        final ItemStack item = new ItemStack(material, 1);
+    protected ItemStack createGuiItem(final String... lore) {
+        final ItemStack item = new ItemStack(Material.PAPER, 1);
         final ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(name);
-
+        meta.setDisplayName("§a구매/판매 방법");
         meta.setLore(Arrays.asList(lore));
-
         item.setItemMeta(meta);
 
         return item;
@@ -72,30 +70,29 @@ public class CoinMarketGUI implements Listener {
 
         final ItemStack clickedItem = e.getCurrentItem();
 
-        // 클릭한 아이템 없으면 리턴해서 무시
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        try {
+            // 클릭한 아이템 없으면 리턴해서 무시
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isLeftClick() && !e.isShiftClick()) {
-            new CoinPurchaseCommand(player, "BTC", false);
-        }
+            String bitcoin = StringExtractor.extractAlphabet(clickedItem.getItemMeta().getDisplayName());
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isRightClick() && !e.isShiftClick()) {
-            new CoinSaleCommand(player, "BTC", false);
-        }
+            if (clickedItem.getType() == Material.GOLD_NUGGET) {
+                if (e.isLeftClick() && !e.isShiftClick()) new CoinPurchaseCommand(player, bitcoin, false);
+                else if (e.isLeftClick() && e.isShiftClick()) new CoinPurchaseCommand(player, bitcoin, true);
+                else if (e.isRightClick() && !e.isShiftClick()) new CoinSaleCommand(player, bitcoin, false);
+                else if (clickedItem.getType() == Material.GOLD_NUGGET) new CoinSaleCommand(player, bitcoin, true);
+            }
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isLeftClick() && e.isShiftClick())) {
-            new CoinPurchaseCommand(player, "BTC", true);
-        }
+            if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a다음 페이지") && e.isLeftClick()) {
+                OpenCoinMarketGUIPageTwoEvent openGUI = new OpenCoinMarketGUIPageTwoEvent(player);
+                Bukkit.getPluginManager().callEvent(openGUI);
+            } else if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a이전 페이지") && e.isLeftClick()) {
+                Messager.sendErrorMessage(player, "이전 페이지가 존재하지 않습니다!");
+            }
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isRightClick() && e.isShiftClick())) {
-            new CoinSaleCommand(player, "BTC", true);
-        }
-
-        if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a다음 페이지") && e.isLeftClick()) {
-            OpenCoinMarketGUIPageTwoEvent openGUI = new OpenCoinMarketGUIPageTwoEvent(player);
-            Bukkit.getPluginManager().callEvent(openGUI);
-        }else if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a이전 페이지") && e.isLeftClick()) {
-            Messager.sendErrorMessage(player, "이전 페이지가 존재하지 않습니다!");
+        }catch (Exception ex) {
+            Messager.tryCatchErrorMessage(player);
+            ex.printStackTrace();
         }
     }
 

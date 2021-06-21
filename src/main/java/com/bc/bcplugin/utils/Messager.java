@@ -15,7 +15,7 @@ public class Messager {
     public static final String DEFAULT_PREFIX = "§e<§6Bitⓒraft§e> ";
     private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    public static List<String> asList(String... strings) throws NullPointerException{
+    public static List<String> asList(String... strings) {
         return new ArrayList<>(Arrays.asList(strings));
     }
 
@@ -40,7 +40,12 @@ public class Messager {
 
     public static void sendOpErrorMessage(CommandSender cs) {
         sendLine(cs);
-        cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "당신은 관리자가 아닙니다.");
+        cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "해당 명령어는 관리자 전용 명령어입니다!");
+    }
+
+    public static void sendPlayerNotExistErrorMessage(CommandSender cs, String username) {
+        sendLine(cs);
+        cs.sendMessage(DEFAULT_PREFIX + "§b" + username + ChatColor.RED + "은(는) 존재하지 않습니다!" );
     }
 
     public static void broadcastMassage(String str) {
@@ -53,7 +58,7 @@ public class Messager {
 
     public static void tryCatchErrorMessage(CommandSender cs) {
         sendLine(cs);
-        cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "예기치 못한 오류가 발생했습니다.");
+        cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "예기치 못한 오류가 발생했습니다!");
         cs.sendMessage(DEFAULT_PREFIX + ChatColor.RED + "개발자에게 보내주실 경우 신속히 처리하겠습니다.");
     }
 

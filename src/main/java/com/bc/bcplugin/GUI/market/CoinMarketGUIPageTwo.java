@@ -4,6 +4,7 @@ import com.bc.bcplugin.GUI.ItemInitializer;
 import com.bc.bcplugin.command.cmds.CoinPurchaseCommand;
 import com.bc.bcplugin.command.cmds.CoinSaleCommand;
 import com.bc.bcplugin.utils.Messager;
+import com.bc.bcplugin.utils.StringExtractor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -74,20 +75,16 @@ public class CoinMarketGUIPageTwo implements Listener {
         // 클릭한 아이템 없으면 리턴해서 무시
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isLeftClick() && !e.isShiftClick()) {
-            new CoinPurchaseCommand(player, "BTC", false);
-        }
+        String bitcoin = StringExtractor.extractAlphabet(clickedItem.getItemMeta().getDisplayName());
 
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && e.isRightClick() && !e.isShiftClick()) {
-            new CoinSaleCommand(player, "BTC", false);
-        }
-
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isLeftClick() && e.isShiftClick())) {
-            new CoinPurchaseCommand(player, "BTC", true);
-        }
-
-        if(clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§6BTC (비트코인)") && (e.isRightClick() && e.isShiftClick())) {
-            new CoinSaleCommand(player, "BTC", true);
+        if (e.isLeftClick() && !e.isShiftClick()) {
+            if (clickedItem.getType() == Material.GOLD_NUGGET) new CoinPurchaseCommand(player, bitcoin, false);
+        }else if (e.isLeftClick() && e.isShiftClick()) {
+            if (clickedItem.getType() == Material.GOLD_NUGGET) new CoinPurchaseCommand(player, bitcoin, true);
+        }else if (e.isRightClick() && !e.isShiftClick()) {
+            if (clickedItem.getType() == Material.GOLD_NUGGET) new CoinSaleCommand(player, bitcoin, false);
+        }else if (e.isRightClick() && e.isShiftClick()) {
+            if (clickedItem.getType() == Material.GOLD_NUGGET) new CoinSaleCommand(player, bitcoin, true);
         }
 
         if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a다음 페이지") && e.isLeftClick()) {
@@ -96,7 +93,6 @@ public class CoinMarketGUIPageTwo implements Listener {
             OpenCoinMarketGUIEvent openGUI = new OpenCoinMarketGUIEvent(player);
             Bukkit.getPluginManager().callEvent(openGUI);
         }
-
     }
 
     // 드래그 캔슬
